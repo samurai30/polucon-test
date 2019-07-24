@@ -23,7 +23,11 @@ use Symfony\Component\Serializer\Annotation\Groups;
  *                            "denormalization_context"={"groups"={"post"}},
  *                            "validation_groups"={"post"}
  *
- *                          }
+ *                          },
+ *                      "get"={
+ *                           "access_control"="is_granted('ROLE_SUBADMIN')",
+ *                            "normalization_context"={"groups"={"get-only-country-name"}}
+ *                              }
  *     }
  * )
  * @ORM\Entity(repositoryClass="App\Repository\UserCountryRepository")
@@ -34,7 +38,7 @@ class UserCountry
      * @ORM\Id()
      * @ORM\GeneratedValue()
      * @ORM\Column(type="integer")
-     * @Groups({"get-country"})
+     * @Groups({"get-country","get-only-country-name"})
      */
     private $id;
 
@@ -46,7 +50,7 @@ class UserCountry
 
     /**
      * @ORM\Column(type="string", length=100)
-     * @Groups({"get-country","get-users","post"})
+     * @Groups({"get-country","get-users","post","get-only-country-name"})
      */
     private $countryName;
 

@@ -39,6 +39,7 @@ class AppFixtures extends Fixture
         $user->setEnabled(true);
         $user->setFirstName("Suyog");
         $user->setLastName("Mishal");
+        $user->setCreatedDate(new DateTime());
         $user->setPassword($this->encoder->encodePassword($user,'suyog@100'));
         $user->setCountries($country);
         $manager->persist($user);

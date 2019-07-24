@@ -88,7 +88,7 @@ use App\Controller\ResetPasswordAction;
  *                        "path"="/users/surveyors",
  *                        "normalization_context"={
  *                                              "groups"={"get-users"}
- *                                               }
+ *                                                }
  *      }
  *     }
  * )
@@ -96,7 +96,7 @@ use App\Controller\ResetPasswordAction;
  * @UniqueEntity(fields={"username"},message="This username is already taken",groups={"post"})
  * @UniqueEntity(fields={"email"},message="This email is already taken",groups={"post"})
  */
-class Users implements UserInterface
+class Users implements UserInterface,CreatedDateInterface
 {
     const ROLE_SURVEYOR = 'ROLE_SURVEYOR';
     const ROLE_CLIENT = 'ROLE_CLIENT';
@@ -231,6 +231,13 @@ class Users implements UserInterface
      * @Assert\NotBlank(groups={"post"})
      */
     private $countries;
+
+    /**
+     * @ORM\Column(type="datetime")
+     * @Groups({"get-users"})
+     *
+     */
+    private $createdDate;
 
     public function __construct()
     {
@@ -433,6 +440,18 @@ class Users implements UserInterface
     public function setCountries(?UserCountry $countries): self
     {
         $this->countries = $countries;
+
+        return $this;
+    }
+
+    public function getCreatedDate(): ?\DateTimeInterface
+    {
+        return $this->createdDate;
+    }
+
+    public function setCreatedDate(\DateTimeInterface $createdDate): CreatedDateInterface
+    {
+        $this->createdDate = $createdDate;
 
         return $this;
     }

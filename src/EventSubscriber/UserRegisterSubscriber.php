@@ -84,6 +84,8 @@ class UserRegisterSubscriber implements EventSubscriberInterface
         {
             throw new AccessDeniedHttpException("Sorry you don't have permission to create ".$user->getRoles()[0]);
         }
+
+
         // Hash Password Here
         $user->setPassword($this->encoder->encodePassword($user,$user->getPassword()));
         // Create confirmation Token
