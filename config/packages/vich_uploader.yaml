@@ -6,12 +6,8 @@ vich_uploader:
             uri_prefix: /images/tasks
             upload_destination: '%kernel.project_dir%/public/images/tasks'
             namer: Vich\UploaderBundle\Naming\UniqidNamer
-        client:
-            uri_prefix: /images/client
-            upload_destination: '%kernel.project_dir%/public/images/client'
-            namer: Vich\UploaderBundle\Naming\UniqidNamer
-        surveyor:
-            uri_prefix: /images/surveyor
-            upload_destination: '%kernel.project_dir%/public/images/surveyor'
+        users:
+            uri_prefix: /images/users
+            upload_destination: '%kernel.project_dir%/public/images/users'
             namer: Vich\UploaderBundle\Naming\UniqidNamer
 
