@@ -239,6 +239,13 @@ class Users implements UserInterface,CreatedDateInterface
      */
     private $createdDate;
 
+    /**
+     * @ORM\OneToOne(targetEntity="App\Entity\Images", inversedBy="users", cascade={"persist", "remove"})
+     * @ORM\JoinColumn(nullable=false)
+     * @Groups({"post","get-users"})
+     */
+    private $profilePic;
+
     public function __construct()
     {
         $this->enabled = false;
@@ -452,6 +459,18 @@ class Users implements UserInterface,CreatedDateInterface
     public function setCreatedDate(\DateTimeInterface $createdDate): CreatedDateInterface
     {
         $this->createdDate = $createdDate;
+
+        return $this;
+    }
+
+    public function getProfilePic(): ?Images
+    {
+        return $this->profilePic;
+    }
+
+    public function setProfilePic(Images $profilePic): self
+    {
+        $this->profilePic = $profilePic;
 
         return $this;
     }

@@ -2,7 +2,7 @@
 
 namespace App\Form;
 
-use App\Entity\Image;
+use App\Entity\Images;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -24,7 +24,7 @@ class ImageUserType extends AbstractType
     {
       $resolver->setDefaults(
         [
-            'data_class' => Image::class,
+            'data_class' => Images::class,
             'csrf_protection' => false
         ]
       );

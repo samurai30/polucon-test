@@ -4,7 +4,7 @@ namespace App\Controller;
 
 use ApiPlatform\Core\Validator\Exception\ValidationException;
 use ApiPlatform\Core\Validator\ValidatorInterface;
-use App\Entity\Image;
+use App\Entity\Images;
 use App\Form\ImageUserType;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -39,7 +39,7 @@ class UploadUserImageActionController extends AbstractController
     public function __invoke(Request $request)
     {
 
-        $image = new Image();
+        $image = new Images();
 
         $form = $this->formFactory->create(ImageUserType::class,$image);
         $form->handleRequest($request);
