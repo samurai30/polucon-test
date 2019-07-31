@@ -11,13 +11,19 @@ use App\Controller\UploadUserImageActionController;
  * @ORM\Entity(repositoryClass="App\Repository\ImageRepository")
  * @Vich\Uploadable()
  * @ApiResource(
+ *     itemOperations={
+ *         "get",
+ *          "delete"={
+ *                  "access_control"="is_granted('ROLE_SUBADMIN') or  (is_granted('IS_AUTHENTICATED_FULLY') and object.getUsers() == user)"
+ *                   }
+ *     },
  *     collectionOperations={
  *     "get"={
  *           "access_control"="is_granted('IS_AUTHENTICATED_FULLY')",
  *            "normalization_context"={"groups"={"get_images"}}
  *           },
  *     "post"={
- *            "access_control"="is_granted('ROLE_ADMIN')",
+ *            "access_control"="is_granted('ROLE_SUBADMIN')",
  *             "method"="POST",
  *             "path"="/images/user",
  *             "controller"=UploadUserImageActionController::class,
@@ -48,7 +54,7 @@ class Images
     private $url;
 
     /**
-     * @ORM\OneToOne(targetEntity="App\Entity\Users", mappedBy="profilePic", cascade={"persist", "remove"})
+     * @ORM\OneToOne(targetEntity="App\Entity\Users", mappedBy="profilePic", cascade={"persist"})
      */
     private $users;
 

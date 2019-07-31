@@ -240,8 +240,8 @@ class Users implements UserInterface,CreatedDateInterface
     private $createdDate;
 
     /**
-     * @ORM\OneToOne(targetEntity="App\Entity\Images", inversedBy="users", cascade={"persist", "remove"})
-     * @ORM\JoinColumn(nullable=false)
+     * @ORM\OneToOne(targetEntity="App\Entity\Images", inversedBy="users", cascade={"persist"})
+     * @ORM\JoinColumn(onDelete="SET NULL")
      * @Groups({"post","get-users"})
      */
     private $profilePic;
