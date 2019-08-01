@@ -33,7 +33,7 @@ class AppFixtures extends Fixture
         $country->setCountryName('INDIA');
         $manager->persist($country);
         $image = new Images();
-        $src = 'C:\Users\Samurai3095\Desktop\PoluconClient\ProfilePic.jpg';
+        $src = 'D:\ClientsProject\ProfilePic.jpg';
         $file = new UploadedFile($src,
             'ProfilePic.jpg',
             'image/jpg',
@@ -55,7 +55,7 @@ class AppFixtures extends Fixture
         $user->setLastName("Mishal");
         $user->setCreatedDate(new DateTime());
         $user->setProfilePic($image);
-        $user->setPassword($this->encoder->encodePassword($user,'suyog@100'));
+        $user->setPassword($this->encoder->encodePassword($user,'Suyog@100'));
         $user->setCountries($country);
         $manager->persist($user);
 

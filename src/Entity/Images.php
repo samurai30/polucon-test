@@ -3,14 +3,20 @@
 namespace App\Entity;
 
 use ApiPlatform\Core\Annotation\ApiResource;
+use DateTime;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Validator\Constraints as Assert;
 use Vich\UploaderBundle\Mapping\Annotation as Vich;
 use App\Controller\UploadUserImageActionController;
 /**
  * @ORM\Entity(repositoryClass="App\Repository\ImageRepository")
  * @Vich\Uploadable()
  * @ApiResource(
+ *   attributes={
+ *         "order"={"id": "ASC"},
+ *         "formats"={"json", "jsonld", "form"={"multipart/form-data"}}
+ *     },
  *     itemOperations={
  *         "get",
  *          "delete"={
@@ -43,7 +49,12 @@ class Images
     private $id;
 
     /**
+     * @Assert\File(
+     *     maxSize="4M",
+     *     mimeTypes={"image/png", "image/jpeg", "image/pjpeg"}
+     * )
      * @Vich\UploadableField(mapping="users",fileNameProperty="url")
+     * @Assert\NotNull()
      */
     private $file;
 
@@ -58,6 +69,30 @@ class Images
      */
     private $users;
 
+    /**
+     * @ORM\Column(type="datetime", nullable=true)
+     *
+     * @var DateTime $updatedAt
+     */
+    protected $updatedAt;
+
+    /**
+     * @return DateTime
+     */
+    public function getUpdatedAt(): DateTime
+    {
+        return $this->updatedAt;
+    }
+
+    /**
+     * @param DateTime $updatedAt
+     */
+    public function setUpdatedAt(DateTime $updatedAt): void
+    {
+        $this->updatedAt = $updatedAt;
+    }
+
+
     public function getFile()
     {
         return $this->file;
@@ -66,6 +101,9 @@ class Images
     public function setFile($file): void
     {
         $this->file = $file;
+        if ($file) {
+            $this->updatedAt = new \DateTime('now');
+        }
     }
 
     public function getUrl()
