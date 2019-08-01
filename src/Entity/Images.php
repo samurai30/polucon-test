@@ -92,7 +92,6 @@ class Images
         $this->updatedAt = $updatedAt;
     }
 
-
     public function getFile()
     {
         return $this->file;
