@@ -42,3 +42,8 @@ services:
         tags:
             - { name: kernel.event_listener, event: kernel.exception, priority: 1 }
         arguments: ['@api_platform.action.exception', '@logger', false]
+
+#    App\EventListener\RemovedFileListener:
+#        arguments: ['@doctrine.orm.entity_manager']
+#        tags:
+#            - { name: kernel.event_listener, event: vich_uploader.post_remove, method: onPostRemove }
