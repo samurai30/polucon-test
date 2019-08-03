@@ -209,6 +209,7 @@ class Users implements UserInterface,CreatedDateInterface
     private $passwordChangeDate;
     /**
      * @ORM\Column(type="boolean")
+     * @Groups({"get-users"})
      */
     private $enabled;
 
