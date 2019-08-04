@@ -43,7 +43,7 @@ class UserContextBuilder implements SerializerContextBuilderInterface
         $context = $this->decorated->createFromRequest($request,$normalization,$extractedAttributes);
         //class being serialized/deserialize
         $resourceClass = $context['resource_class']??null;
-        if (Users::class === $resourceClass && isset($context['groups'])&& $normalization === true && $this->authorizationChecker->isGranted(Users::ROLE_SUPERADMIN) ){
+        if (Users::class === $resourceClass && isset($context['groups'])&& $normalization === true && $this->authorizationChecker->isGranted(Users::ROLE_SUBADMIN) ){
             $context['groups'][] = 'get-admin';
         }
         return $context;

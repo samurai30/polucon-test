@@ -77,7 +77,7 @@ use App\Controller\ResetPasswordAction;
  *              "validation_groups" ={"post"}
  *            },
  *     "get" ={
- *              "access_control"="is_granted('ROLE_SUPERADMIN')",
+ *              "access_control"="is_granted('ROLE_SUBADMIN')",
  *              "normalization_context"={
  *                                         "groups"={"get-users"}
  *                                      }
