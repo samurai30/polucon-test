@@ -89,7 +89,16 @@ use App\Controller\ResetPasswordAction;
  *                        "normalization_context"={
  *                                              "groups"={"get-users"}
  *                                                }
- *      }
+ *
+ *                      },
+ *     "get-users-dashboard"={
+ *                           "access_control"="is_granted('IS_AUTHENTICATED_FULLY')",
+ *                           "method"="GET",
+ *                           "path"="/users/all-users",
+ *                           "normalization_context"={
+ *                                                  "groups"={"get-users"}
+ *                                                }
+ *                          }
  *     }
  * )
  * @ORM\Entity(repositoryClass="App\Repository\UsersRepository")

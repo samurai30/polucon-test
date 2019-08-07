@@ -1,3 +1,7 @@
 api_login_check:
-  path: /api/login_check
+  path: /api/dashboard/login_check
+  methods: POST
+
+api_app_login:
+  path: /api/surveyor/login_check
   methods: POST

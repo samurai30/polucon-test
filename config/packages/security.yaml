@@ -10,18 +10,33 @@ security:
         dev:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
             security: false
+#        apiSurveyor:
+#            pattern: ^/api/surveyor
+#            anonymous: true
+#            stateless: true
+#            provider: database
+#            json_login:
+#                check_path: /api/surveyor/login_check
+#                success_handler: lexik_jwt_authentication.handler.authentication_success
+#                failure_handler: lexik_jwt_authentication.handler.authentication_failure
+#            guard:
+#                authenticators:
+#                    - App\Security\TokenAuthenticator
+#            user_checker: App\Security\UserCheckerSurveyor
         api:
             pattern: ^/api
             anonymous: true
             stateless: true
+            provider: database
             json_login:
-                check_path: /api/login_check
+                check_path: /api/dashboard/login_check
                 success_handler: lexik_jwt_authentication.handler.authentication_success
                 failure_handler: lexik_jwt_authentication.handler.authentication_failure
             guard:
                 authenticators:
                     - App\Security\TokenAuthenticator
-            user_checker: App\Security\UserEnabledChecker
+            user_checker: App\Security\UserCheckerDashboard
+
 
 
 

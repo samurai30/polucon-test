@@ -8,9 +8,12 @@
 
 namespace App\Security;
 
+use App\Entity\Users;
+use App\Exceptions\SurveyorException;
 use Lexik\Bundle\JWTAuthenticationBundle\Exception\ExpiredTokenException;
 use Lexik\Bundle\JWTAuthenticationBundle\Security\Authentication\Token\PreAuthenticationJWTUserToken;
 use Lexik\Bundle\JWTAuthenticationBundle\Security\Guard\JWTTokenAuthenticator;
+use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Core\User\UserProviderInterface;
 
 class TokenAuthenticator extends  JWTTokenAuthenticator
@@ -18,7 +21,8 @@ class TokenAuthenticator extends  JWTTokenAuthenticator
     /**
      * @param PreAuthenticationJWTUserToken $preAuthToken
      * @param UserProviderInterface $userProvider
-     * @return \Symfony\Component\Security\Core\User\UserInterface|void|null
+     * @return UserInterface|void|null
+     * @throws SurveyorException
      */
     public function getUser($preAuthToken, UserProviderInterface $userProvider)
  {
@@ -26,9 +30,11 @@ class TokenAuthenticator extends  JWTTokenAuthenticator
     if ($user->getPasswordChangeDate() && $preAuthToken->getPayload()['iat']<$user->getPasswordChangeDate()){
         throw new ExpiredTokenException();
     }
+
     return $user;
 
  }
+
 
 
 }

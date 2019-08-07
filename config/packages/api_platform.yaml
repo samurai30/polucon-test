@@ -3,3 +3,13 @@ api_platform:
         paths: ['%kernel.project_dir%/src/Entity']
     exception_to_status:
         App\Exceptions\EmptyBodyException: 400
+        App\Exceptions\ClientException: 403
+        App\Exceptions\SurveyorException: 403
+    swagger:
+        api_keys:
+            - name: Authorization
+              type: header
+    collection:
+        pagination:
+            enabled: true
+            items_per_page: 20

@@ -46,6 +46,7 @@ class UserContextBuilder implements SerializerContextBuilderInterface
         if (Users::class === $resourceClass && isset($context['groups'])&& $normalization === true && $this->authorizationChecker->isGranted(Users::ROLE_SUBADMIN) ){
             $context['groups'][] = 'get-admin';
         }
+
         return $context;
     }
 }

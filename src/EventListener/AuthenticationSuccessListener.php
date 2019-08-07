@@ -19,6 +19,7 @@ class AuthenticationSuccessListener
      $data = $event->getData();
      $user = $event->getUser();
 
+
      if(!$user instanceof Users){
          return;
      }

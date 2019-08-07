@@ -100,7 +100,12 @@ class Tasks implements SuperAdminInterface,CreatedDateInterface
      * @Groups({"getTask"})
      */
     private $Users;
-
+    /**
+     * @ORM\Column(type="json_array")
+     * @Assert\NotBlank()
+     * @Groups({"post","getTask"})
+     */
+    private $formDataJson;
 
     public function __construct()
     {
@@ -114,6 +119,16 @@ class Tasks implements SuperAdminInterface,CreatedDateInterface
         return $this->id;
     }
 
+
+    public function getFormDataJson()
+    {
+        return $this->formDataJson;
+    }
+
+    public function setFormDataJson($formDataJson): void
+    {
+        $this->formDataJson = $formDataJson;
+    }
     public function getDescription(): ?string
     {
         return $this->description;

@@ -40,6 +40,7 @@ class UserAttributeNormalizer implements ContextAwareNormalizerInterface,Seriali
         if(isset($context[self::USER_ATTRIBUTE_NORMALIZER_ALREADY_CALLED])){
             return false;
         }
+
         return $data instanceof Users;
 
     }
@@ -79,7 +80,7 @@ class UserAttributeNormalizer implements ContextAwareNormalizerInterface,Seriali
         }
         $context[self::USER_ATTRIBUTE_NORMALIZER_ALREADY_CALLED] = true;
 
-        return $this->serializer->normalize($object,$format,$context);
+        return  $this->serializer->normalize($object,$format,$context);
     }
 
 }
