@@ -118,7 +118,8 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
  *     properties={
  *         "firstName": "partial",
  *         "lastName": "partial",
- *         "username": "exact"
+ *         "username": "exact",
+ *         "roles" : "exact"
  *     }
  * )
  * @ORM\Entity(repositoryClass="App\Repository\UsersRepository")
