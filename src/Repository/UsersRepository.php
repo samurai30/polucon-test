@@ -5,6 +5,12 @@ namespace App\Repository;
 use App\Entity\Users;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Symfony\Bridge\Doctrine\RegistryInterface;
+use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
+use Doctrine\ORM\Tools\Pagination\Paginator as DoctrinePaginator;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Paginator;
+
+
 
 /**
  * @method Users|null find($id, $lockMode = null, $lockVersion = null)
@@ -14,9 +20,31 @@ use Symfony\Bridge\Doctrine\RegistryInterface;
  */
 class UsersRepository extends ServiceEntityRepository
 {
+
     public function __construct(RegistryInterface $registry)
     {
         parent::__construct($registry, Users::class);
+    }
+    const ITEMS_PER_PAGE = 20;
+
+
+    public function getAllUsers(int $page = 1){
+
+        $firstResult = ($page -1) * self::ITEMS_PER_PAGE;
+
+
+        $queryBuilder = $this->createQueryBuilder('o');
+        $queryBuilder->andWhere('o.roles != :val')
+            ->setParameter('val', 'ROLE_SUPERADMIN' );
+
+        $query = $queryBuilder->getQuery()
+            ->setFirstResult($firstResult)
+            ->setMaxResults(self::ITEMS_PER_PAGE);
+
+        $doctrinePaginator = new DoctrinePaginator($query);
+        $paginator = new Paginator($doctrinePaginator);
+
+        return $paginator;
     }
 
     // /**

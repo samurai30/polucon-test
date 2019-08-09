@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Core\Annotation\ApiFilter;
 use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Annotation\ApiSubresource;
 use App\Controller\AssignSurveyorController;
@@ -14,6 +15,7 @@ use Symfony\Component\Security\Core\Validator\Constraints\UserPassword;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 use App\Controller\ResetPasswordAction;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
 /**
  * @ApiResource(
  *     itemOperations={
@@ -97,8 +99,26 @@ use App\Controller\ResetPasswordAction;
  *                           "path"="/users/all-users",
  *                           "normalization_context"={
  *                                                  "groups"={"get-users"}
- *                                                }
+ *                                                },
+ *                          "pagination_fetch_join_collection"=true
+ *                          },
+ *     "get-tasks-surveyors"={
+ *                           "access_control"="is_granted('ROLE_SUBADMIN')",
+ *                           "method"="GET",
+ *                           "path"="/users/surveyors",
+ *                           "normalization_context"={
+ *                                                  "groups"={"get-users"}
+ *                                                },
+ *                          "pagination_fetch_join_collection"=true
  *                          }
+ *     }
+ * )
+ * @ApiFilter(
+ *     SearchFilter::class,
+ *     properties={
+ *         "firstName": "partial",
+ *         "lastName": "partial",
+ *         "username": "exact"
  *     }
  * )
  * @ORM\Entity(repositoryClass="App\Repository\UsersRepository")

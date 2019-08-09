@@ -107,6 +107,12 @@ class Tasks implements SuperAdminInterface,CreatedDateInterface
      */
     private $formDataJson;
 
+    /**
+     * @ORM\ManyToOne(targetEntity="App\Entity\TaskCategory", inversedBy="tasks")
+     * @ORM\JoinColumn(nullable=false)
+     */
+    private $category;
+
     public function __construct()
     {
         $this->Forms = new ArrayCollection();
@@ -218,6 +224,18 @@ class Tasks implements SuperAdminInterface,CreatedDateInterface
         if ($this->Users->contains($user)) {
             $this->Users->removeElement($user);
         }
+
+        return $this;
+    }
+
+    public function getCategory(): ?TaskCategory
+    {
+        return $this->category;
+    }
+
+    public function setCategory(?TaskCategory $category): self
+    {
+        $this->category = $category;
 
         return $this;
     }
