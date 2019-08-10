@@ -18,6 +18,7 @@ use App\Controller\ResetPasswordAction;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
 /**
  * @ApiResource(
+
  *     itemOperations={
  *     "get"={
  *              "access_control"="is_granted('IS_AUTHENTICATED_FULLY')",

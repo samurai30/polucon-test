@@ -25,8 +25,17 @@ use Symfony\Component\Validator\Constraints as Assert;
  *                  "access_control"="is_granted('ROLE_SUBADMIN')",
  *                  "method"="POST",
  *                  "path"="/tasks/{id}/add-form/{forms_id}/{description}",
- *                  "controller"=AddFormsController::class
- *                  }
+ *                  "controller"=AddFormsController::class,
+ *                  "denormalization_context"={
+ *                                     "groups"= {"post_task"}
+ *                                        }
+ *                  },
+ *     "put" = {
+ *               "access_control"="is_granted('ROLE_SUBADMIN')",
+ *                "denormalization_context"={
+ *                                     "groups"= {"put"}
+ *                                        }
+ *     }
  *     },
  *     collectionOperations={
  *     "get" = {
@@ -70,7 +79,7 @@ class Tasks implements SuperAdminInterface,CreatedDateInterface
 
     /**
      * @ORM\Column(type="text")
-     * @Groups({"post","getTask","get-users"})
+     * @Groups({"post","getTask","get-users","put"})
      * @Assert\NotBlank(groups={"post"})
      * @Assert\Length(max="10000",min="5",groups={"post"})
      */
@@ -83,7 +92,7 @@ class Tasks implements SuperAdminInterface,CreatedDateInterface
 
     /**
      * @ORM\Column(type="string", length=100)
-     * @Groups({"post","getTask","get-users"})
+     * @Groups({"post","getTask","get-users","put"})
      * @Assert\NotBlank(groups={"post"})
      * @Assert\Length(max="70",groups={"post"})
      */
@@ -103,7 +112,7 @@ class Tasks implements SuperAdminInterface,CreatedDateInterface
     /**
      * @ORM\Column(type="json_array")
      * @Assert\NotBlank()
-     * @Groups({"post","getTask"})
+     * @Groups({"post","getTask","put"})
      */
     private $formDataJson;
 
