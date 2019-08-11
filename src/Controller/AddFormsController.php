@@ -32,7 +32,7 @@ class AddFormsController
         $this->manager = $manager;
     }
 
-    public function __invoke(Tasks $data,$forms_id,$description)
+    public function __invoke(Tasks $data,$forms_id)
     {
 
         if($data){
@@ -53,7 +53,6 @@ class AddFormsController
 
                 $form_task = new FormTasks();
 
-                $form_task->setDescription($description);
                 $form_task->setFormDataJson($form->getFormDataJson());
                 $form->addTasksForm($form_task);
                 $data->addForm($form_task);

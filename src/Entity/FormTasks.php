@@ -37,11 +37,7 @@ class FormTasks
      */
     private $id;
 
-    /**
-     * @ORM\Column(type="text")
-     * @Groups({"get_form_task"})
-     */
-    private $description;
+
 
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\Tasks", inversedBy="Forms")
@@ -77,17 +73,8 @@ class FormTasks
     {
         $this->formDataJson = $formDataJson;
     }
-    public function getDescription(): ?string
-    {
-        return $this->description;
-    }
 
-    public function setDescription(string $description): self
-    {
-        $this->description = $description;
 
-        return $this;
-    }
 
     public function getTasks(): ?Tasks
     {

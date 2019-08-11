@@ -11,11 +11,12 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ApiResource(
+ *     attributes={"pagination_enabled"=false},
  *     itemOperations={
  *     "get"={
  *           "access_control"="is_granted('ROLE_SUPERADMIN')",
  *            "normalization_context"={
- *                                    "groups"={"get"}
+ *                                    "groups"={"get_form"}
  *                                   }
  *           }
  *     },
@@ -23,7 +24,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  *     "post" = {
  *              "access_control"="is_granted('ROLE_SUPERADMIN')",
  *            "normalization_context"={
- *                                    "groups"={"get"}
+ *                                    "groups"={"get_form"}
  *                                   },
  *            "denormalization_context"={
  *                                    "groups"={"post"}
@@ -32,7 +33,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  *     "get" = {
  *             "access_control" = "is_granted('ROLE_ADMIN')",
  *              "normalization_context"={
- *                                      "groups"={"get"}
+ *                                      "groups"={"get_form"}
  *                                      }
  *              }
  *     }
@@ -45,7 +46,7 @@ class Forms
      * @ORM\Id()
      * @ORM\GeneratedValue()
      * @ORM\Column(type="integer")
-     * @Groups({"post"})
+     * @Groups({"post","get_form"})
      */
     private $id;
 
@@ -58,16 +59,23 @@ class Forms
 
     /**
      * @ORM\Column(type="string", length=100)
-     * @Groups({"post","get"})
+     * @Groups({"post","get_form"})
      */
     private $description;
 
     /**
      * @ORM\Column(type="json_array")
      * @Assert\NotBlank()
-     * @Groups({"post","get"})
+     * @Groups({"post","get_form"})
      */
     private $formDataJson;
+
+    /**
+     * @ORM\Column(type="string", length=60)
+     * @Assert\NotBlank()
+     * @Groups({"post","get_form"})
+     */
+    private $name;
 
     public function __construct()
     {
@@ -130,6 +138,18 @@ class Forms
     public function setFormDataJson($formDataJson): self
     {
         $this->formDataJson = $formDataJson;
+
+        return $this;
+    }
+
+    public function getName(): ?string
+    {
+        return $this->name;
+    }
+
+    public function setName(string $name): self
+    {
+        $this->name = $name;
 
         return $this;
     }

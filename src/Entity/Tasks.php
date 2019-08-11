@@ -24,7 +24,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  *     "task-add-form"={
  *                  "access_control"="is_granted('ROLE_SUBADMIN')",
  *                  "method"="POST",
- *                  "path"="/tasks/{id}/add-form/{forms_id}/{description}",
+ *                  "path"="/tasks/{id}/add-form/{forms_id}",
  *                  "controller"=AddFormsController::class,
  *                  "denormalization_context"={
  *                                     "groups"= {"post_task"}
@@ -110,12 +110,17 @@ class Tasks implements SuperAdminInterface,CreatedDateInterface
      */
     private $Users;
 
-
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\TaskCategory", inversedBy="tasks")
      * @ORM\JoinColumn(nullable=false)
+     * @Groups({"post","getTask"})
      */
     private $category;
+
+    /**
+     * @ORM\Column(type="string", length=30,nullable=true)
+     */
+    private $status;
 
     public function __construct()
     {
@@ -226,6 +231,18 @@ class Tasks implements SuperAdminInterface,CreatedDateInterface
     public function setCategory(?TaskCategory $category): self
     {
         $this->category = $category;
+        return $this;
+    }
+
+    public function getStatus(): ?string
+    {
+        return $this->status;
+    }
+
+    public function setStatus(string $status): self
+    {
+        $this->status = $status;
+
         return $this;
     }
 
