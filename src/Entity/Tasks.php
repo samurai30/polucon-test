@@ -42,7 +42,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  *          "access_control"="is_granted('IS_AUTHENTICATED_FULLY')",
  *              "normalization_context"={
  *                                      "groups"= {"getTask"}
- *                                      },
+ *                                      }
  *              },
  *     "post" = {
  *              "access_control"="is_granted('ROLE_SUPERADMIN')",
@@ -119,6 +119,7 @@ class Tasks implements SuperAdminInterface,CreatedDateInterface
 
     /**
      * @ORM\Column(type="string", length=30,nullable=true)
+     * @Groups({"getTask"})
      */
     private $status;
 
@@ -140,6 +141,14 @@ class Tasks implements SuperAdminInterface,CreatedDateInterface
         $this->description = $description;
 
         return $this;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getDescription()
+    {
+        return $this->description;
     }
 
     /**
