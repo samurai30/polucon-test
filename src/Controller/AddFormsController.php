@@ -54,6 +54,7 @@ class AddFormsController
                 $form_task = new FormTasks();
 
                 $form_task->setDescription($description);
+                $form_task->setFormDataJson($form->getFormDataJson());
                 $form->addTasksForm($form_task);
                 $data->addForm($form_task);
                 $this->manager->persist($form_task);

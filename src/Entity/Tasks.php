@@ -109,12 +109,7 @@ class Tasks implements SuperAdminInterface,CreatedDateInterface
      * @Groups({"getTask"})
      */
     private $Users;
-    /**
-     * @ORM\Column(type="json_array")
-     * @Assert\NotBlank()
-     * @Groups({"post","getTask","put"})
-     */
-    private $formDataJson;
+
 
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\TaskCategory", inversedBy="tasks")
@@ -134,20 +129,6 @@ class Tasks implements SuperAdminInterface,CreatedDateInterface
         return $this->id;
     }
 
-
-    public function getFormDataJson()
-    {
-        return $this->formDataJson;
-    }
-
-    public function setFormDataJson($formDataJson): void
-    {
-        $this->formDataJson = $formDataJson;
-    }
-    public function getDescription(): ?string
-    {
-        return $this->description;
-    }
 
     public function setDescription(string $description): self
     {
@@ -245,7 +226,6 @@ class Tasks implements SuperAdminInterface,CreatedDateInterface
     public function setCategory(?TaskCategory $category): self
     {
         $this->category = $category;
-
         return $this;
     }
 

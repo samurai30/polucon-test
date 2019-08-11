@@ -6,6 +6,7 @@ use ApiPlatform\Core\Annotation\ApiResource;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -21,10 +22,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  *     },
  *     collectionOperations={
  *     "post" = {
- *              "access_control" = "is_granted('ROLE_SUPERADMIN')",
- *               "normalization_context"={
- *                                      "groups"= {"getCat"}
- *                                      },
+ *              "access_control" = "is_granted('ROLE_ADMIN')",
  *              "denormalization_context"={
  *                                     "groups"= {"post"}
  *                                        },
@@ -39,6 +37,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  *     }
  * )
  * @ORM\Entity(repositoryClass="App\Repository\TaskCatagoryRepository")
+ * @UniqueEntity(fields={"catagoryName"},message="This Category already exits",groups={"post"})
  */
 class TaskCategory
 {
@@ -52,14 +51,13 @@ class TaskCategory
 
     /**
      * @ORM\Column(type="string", length=60)
-     * @Groups({"getCat"})
+     * @Groups({"getCat","post"})
      * @Assert\NotBlank(groups={"post"})
      */
     private $catagoryName;
 
     /**
      * @ORM\OneToMany(targetEntity="App\Entity\Tasks", mappedBy="category", orphanRemoval=true)
-     * @Assert\NotBlank(groups={"post"})
      * @Groups({"getCat"})
      */
     private $tasks;

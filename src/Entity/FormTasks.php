@@ -12,7 +12,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
  *     "get" = {
  *              "access_control" = "is_granted('IS_AUTHENTICATED_FULLY')",
  *              "normalization_context" = {
- *                                      "groups"={"get"}
+ *                                      "groups"={"get_form_task"}
  *                                       }
  *              }
  *    },
@@ -20,7 +20,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
  *     "get" = {
  *               "access_control" = "is_granted('ROLE_SUPERADMIN')",
  *              "normalization_context" = {
- *                                      "groups"={"get"}
+ *                                      "groups"={"get_form_task"}
  *                                       }
  *              }
  *   }
@@ -33,13 +33,13 @@ class FormTasks
      * @ORM\Id()
      * @ORM\GeneratedValue()
      * @ORM\Column(type="integer")
-     * @Groups({"get"})
+     * @Groups({"get_form_task"})
      */
     private $id;
 
     /**
      * @ORM\Column(type="text")
-     * @Groups({"get"})
+     * @Groups({"get_form_task"})
      */
     private $description;
 
@@ -55,12 +55,28 @@ class FormTasks
      */
     private $form;
 
+    /**
+     * @ORM\Column(type="json_array")
+     * @Groups({"get_form_task","put"})
+     */
+    private $formDataJson;
+
 
     public function getId(): ?int
     {
         return $this->id;
     }
 
+    public function getFormDataJson()
+    {
+        return $this->formDataJson;
+    }
+
+
+    public function setFormDataJson($formDataJson): void
+    {
+        $this->formDataJson = $formDataJson;
+    }
     public function getDescription(): ?string
     {
         return $this->description;
