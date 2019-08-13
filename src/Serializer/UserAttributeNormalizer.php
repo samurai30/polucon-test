@@ -64,9 +64,23 @@ class UserAttributeNormalizer implements ContextAwareNormalizerInterface,Seriali
         if($this->isUserHimself($object)){
             $context['groups'][]='get-owner';
         }
+        if ($this->isUserClient($object)){
+            $context['groups'][]='get-client-uid';
+        }
+        if ($this->isUserSurveyor($object)){
+            $context['groups'][]='get-surveyor-uid';
+        }
 
         //Continue with serialization
         return $this->passOn($object,$format,$context);
+    }
+
+    private function isUserClient($object){
+        return $object->getRoles()[0] === 'ROLE_CLIENT';
+    }
+
+    private function isUserSurveyor($object){
+        return $object->getRoles()[0] === 'ROLE_SURVEYOR';
     }
 
     private function isUserHimself($object){

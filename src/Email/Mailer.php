@@ -47,5 +47,16 @@ class Mailer
             ->setBody($body, 'text/html');
         $this->mailer->send($message);
     }
+    public function sendDetailsEmail(Users $users,$pass){
+        $body = $this->twig->render('email/credentials.html.twig',[
+            'user' => $users,
+            'password' => $pass
+        ]);
 
+        $message = (new \Swift_Message('User Credentials: POLUCON'))
+            ->setFrom('samurai3095@gmail.com')
+            ->setTo($users->getEmail())
+            ->setBody($body, 'text/html');
+        $this->mailer->send($message);
+    }
 }

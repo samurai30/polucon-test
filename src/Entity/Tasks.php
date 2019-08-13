@@ -35,7 +35,10 @@ use Symfony\Component\Validator\Constraints as Assert;
  *                "denormalization_context"={
  *                                     "groups"= {"put"}
  *                                        }
- *     }
+ *              },
+ *     "delete"={
+ *              "access_control" = "is_granted('ROLE_SUPERADMIN')"
+ *              },
  *     },
  *     collectionOperations={
  *     "get" = {
@@ -60,7 +63,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  *                       "access_control" = "is_granted('IS_AUTHENTICATED_FULLY')",
  *                       "normalization_context" = {
  *                                              "groups" = {"getTask"}
- *                                                  }
+ *                                                 }
  *                      }
  *      }
  * )
@@ -106,6 +109,7 @@ class Tasks implements SuperAdminInterface,CreatedDateInterface
 
     /**
      * @ORM\ManyToMany(targetEntity="App\Entity\Users", inversedBy="Tasks")
+     * @ORM\JoinTable(name="tasks_surveyors")
      * @Groups({"getTask"})
      */
     private $Users;
@@ -123,11 +127,17 @@ class Tasks implements SuperAdminInterface,CreatedDateInterface
      */
     private $status;
 
+    /**
+     * @ORM\ManyToMany(targetEntity="App\Entity\Users", inversedBy="clientTasks")
+     * @ORM\JoinTable(name="client_task")
+     */
+    private $client;
+
     public function __construct()
     {
         $this->Forms = new ArrayCollection();
         $this->Users = new ArrayCollection();
-
+        $this->client = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -251,6 +261,32 @@ class Tasks implements SuperAdminInterface,CreatedDateInterface
     public function setStatus(string $status): self
     {
         $this->status = $status;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Users[]
+     */
+    public function getClient(): Collection
+    {
+        return $this->client;
+    }
+
+    public function addClient(Users $client): self
+    {
+        if (!$this->client->contains($client)) {
+            $this->client[] = $client;
+        }
+
+        return $this;
+    }
+
+    public function removeClient(Users $client): self
+    {
+        if ($this->client->contains($client)) {
+            $this->client->removeElement($client);
+        }
 
         return $this;
     }

@@ -57,7 +57,6 @@ class AddFormsController
                 $form->addTasksForm($form_task);
                 $data->addForm($form_task);
                 $this->manager->persist($form_task);
-
                 $this->manager->flush();
                 return new JsonResponse(['result' =>'FORM ADDED'],Response::HTTP_OK);
             }else{

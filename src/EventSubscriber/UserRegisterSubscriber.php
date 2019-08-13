@@ -6,10 +6,13 @@ namespace App\EventSubscriber;
 
 use ApiPlatform\Core\EventListener\EventPriorities;
 use App\Email\Mailer;
+use App\Entity\ClientsUID;
 use App\Entity\Users;
 use App\Security\TokenGenerator;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpKernel\Event\RequestEvent;
 use Symfony\Component\HttpKernel\Event\ViewEvent;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\KernelEvents;
@@ -36,14 +39,19 @@ class UserRegisterSubscriber implements EventSubscriberInterface
      * @var TokenStorageInterface
      */
     private $tokenStorage;
+    /**
+     * @var EntityManagerInterface
+     */
+    private $manager;
 
-    public function __construct(UserPasswordEncoderInterface $encoder,TokenGenerator $tokenGenerator,Mailer $mailer,TokenStorageInterface $tokenStorage)
+    public function __construct(UserPasswordEncoderInterface $encoder,TokenGenerator $tokenGenerator,Mailer $mailer,TokenStorageInterface $tokenStorage,EntityManagerInterface $manager)
     {
         $this->encoder = $encoder;
         $this->tokenGenerator = $tokenGenerator;
         $this->mailer = $mailer;
 
         $this->tokenStorage = $tokenStorage;
+        $this->manager = $manager;
     }
 
 
@@ -51,10 +59,16 @@ class UserRegisterSubscriber implements EventSubscriberInterface
     {
         return [
           KernelEvents::VIEW => ['userRegistered',EventPriorities::PRE_WRITE]
+//            , KernelEvents::REQUEST =>['checkDept',EventPriorities::PRE_DESERIALIZE]
         ];
     }
+
+//    public function checkDept(RequestEvent $event){
+//        $event->getRequest();
+//    }
     public function userRegistered(ViewEvent $event)
     {
+
         $user = $event->getControllerResult();
         $method = $event->getRequest()->getMethod();
         $authUserRole = $this->tokenStorage->getToken()->getUser()->getRoles()[0];
@@ -84,7 +98,14 @@ class UserRegisterSubscriber implements EventSubscriberInterface
         {
             throw new AccessDeniedHttpException("Sorry you don't have permission to create ".$user->getRoles()[0]);
         }
-
+        //credentials
+        $this->mailer->sendDetailsEmail($user,$user->getPassword());
+        //set UID client
+        if ($user->getRoles()[0] === 'ROLE_CLIENT'){
+            $clientId = new ClientsUID();
+            $clientId->setUID($this->getClientId());
+            $user->setClientsUID($clientId);
+        }
 
         // Hash Password Here
         $user->setPassword($this->encoder->encodePassword($user,$user->getPassword()));
@@ -93,6 +114,13 @@ class UserRegisterSubscriber implements EventSubscriberInterface
         //Confirmation Mail
         $this->mailer->sendConfrimationEmail($user);
 
-
+    }
+    public function getClientId(){
+        $lastClient = $this->manager->getRepository(ClientsUID::class)->findBy([],['UID' => 'DESC']);
+        if ( ! $lastClient )
+            $number = 0;
+        else
+            $number = substr($lastClient[0]->getUID(), 3);
+        return 'CLI' . sprintf('%06d', intval($number) + 1);
     }
 }

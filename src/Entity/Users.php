@@ -27,7 +27,7 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
  *                          }
  *          },
  *     "put"={
- *          "access_control"="is_granted('IS_AUTHENTICATED_FULLY') and object == user",
+ *          "access_control"="(is_granted('IS_AUTHENTICATED_FULLY') and object == user) or is_granted('ROLE_ADMIN')",
  *           "denormalization_context"={
  *                                      "groups"={"put"}
  *                                      },
@@ -148,21 +148,21 @@ class Users implements UserInterface,CreatedDateInterface
     /**
      * @Assert\NotBlank(groups={"post"})
      * @ORM\Column(type="string", length=120)
-     * @Groups({"post","put","get-users","getTask"})
+     * @Groups({"post","put","get-users","getTask","get-client-by-uid"})
      */
     private $firstName;
 
     /**
      * @Assert\NotBlank(groups={"post"})
      * @ORM\Column(type="string", length=120)
-     * @Groups({"post","put","get-users","getTask"})
+     * @Groups({"post","put","get-users","getTask","get-client-by-uid"})
      */
     private $lastName;
 
     /**
      * @Assert\NotBlank(groups={"post"})
      * @ORM\Column(type="string", length=60)
-     * @Groups({"post","get-users","getTask"})
+     * @Groups({"post","get-users","getTask","get-client-by-uid"})
      */
     private $username;
 
@@ -229,9 +229,9 @@ class Users implements UserInterface,CreatedDateInterface
 
     /**
      * @ORM\Column(type="string", length=100)
-     * @Groups({"post","get-owner","get-admin","put-reset-email"})
-     * @Assert\Email(groups={"post","put-reset-email"})
-     * @Assert\NotBlank(groups={"post","put-reset-email"})
+     * @Groups({"post","get-owner","get-admin","put-reset-email","put"})
+     * @Assert\Email(groups={"post","put-reset-email","put"})
+     * @Assert\NotBlank(groups={"post","put-reset-email","put"})
      */
     private $email;
     /**
@@ -278,11 +278,29 @@ class Users implements UserInterface,CreatedDateInterface
      */
     private $profilePic;
 
+    /**
+     * @ORM\ManyToMany(targetEntity="App\Entity\Tasks", mappedBy="client")
+     */
+    private $clientTasks;
+
+    /**
+     * @ORM\OneToOne(targetEntity="App\Entity\ClientsUID", mappedBy="clients", cascade={"persist", "remove"})
+     * @Groups({"get-client-uid"})
+     */
+    private $clientsUID;
+
+    /**
+     * @ORM\OneToOne(targetEntity="App\Entity\SurveyorUID", mappedBy="surveyors", cascade={"persist", "remove"})
+     * @Groups({"get-surveyor-uid"})
+     */
+    private $surveyorUID;
+
     public function __construct()
     {
         $this->enabled = false;
         $this->confirmationToken = null;
         $this->Tasks = new ArrayCollection();
+        $this->clientTasks = new ArrayCollection();
 
     }
 
@@ -503,6 +521,68 @@ class Users implements UserInterface,CreatedDateInterface
     public function setProfilePic(Images $profilePic): self
     {
         $this->profilePic = $profilePic;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Tasks[]
+     */
+    public function getClientTasks(): Collection
+    {
+        return $this->clientTasks;
+    }
+
+    public function addClientTask(Tasks $clientTask): self
+    {
+        if (!$this->clientTasks->contains($clientTask)) {
+            $this->clientTasks[] = $clientTask;
+            $clientTask->addClient($this);
+        }
+
+        return $this;
+    }
+
+    public function removeClientTask(Tasks $clientTask): self
+    {
+        if ($this->clientTasks->contains($clientTask)) {
+            $this->clientTasks->removeElement($clientTask);
+            $clientTask->removeClient($this);
+        }
+
+        return $this;
+    }
+
+    public function getClientsUID(): ?ClientsUID
+    {
+        return $this->clientsUID;
+    }
+
+    public function setClientsUID(ClientsUID $clientsUID): self
+    {
+        $this->clientsUID = $clientsUID;
+
+        // set the owning side of the relation if necessary
+        if ($this !== $clientsUID->getClients()) {
+            $clientsUID->setClients($this);
+        }
+
+        return $this;
+    }
+
+    public function getSurveyorUID(): ?SurveyorUID
+    {
+        return $this->surveyorUID;
+    }
+
+    public function setSurveyorUID(SurveyorUID $surveyorUID): self
+    {
+        $this->surveyorUID = $surveyorUID;
+
+        // set the owning side of the relation if necessary
+        if ($this !== $surveyorUID->getSurveyors()) {
+            $surveyorUID->setSurveyors($this);
+        }
 
         return $this;
     }
