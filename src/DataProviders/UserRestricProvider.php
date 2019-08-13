@@ -47,7 +47,8 @@ class UserRestricProvider implements CollectionDataProviderInterface,RestrictedD
             if ('get-tasks-surveyors' === $operationName){
                 $queryBuilder = $repository->createQueryBuilder('o')->andWhere('o.roles = :val')
                     ->setParameter('val', 'ROLE_SURVEYOR' );
-            }else{
+            }
+            else{
                 $queryBuilder = $repository->createQueryBuilder('o')->andWhere('o.roles != :val')
                     ->setParameter('val', 'ROLE_SUPERADMIN' );
             }

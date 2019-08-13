@@ -90,7 +90,6 @@ class UserAttributeNormalizer implements ContextAwareNormalizerInterface,Seriali
     private function passOn($object,$format,$context){
         if(!$this->serializer instanceof NormalizerInterface){
             throw new \LogicException(sprintf('Cannot normalizer object "%s" because the injected serializer is not a normalizer.',$object));
-
         }
         $context[self::USER_ATTRIBUTE_NORMALIZER_ALREADY_CALLED] = true;
 
