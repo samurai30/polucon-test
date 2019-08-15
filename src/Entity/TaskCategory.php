@@ -52,7 +52,7 @@ class TaskCategory
 
     /**
      * @ORM\Column(type="string", length=60)
-     * @Groups({"getCat","post","getTask"})
+     * @Groups({"getCat","post","getTask","get-users-client","get-users-surveyor"})
      * @Assert\NotBlank(groups={"post"})
      */
     private $catagoryName;

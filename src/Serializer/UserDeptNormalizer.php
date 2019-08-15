@@ -40,15 +40,18 @@ class UserDeptNormalizer  implements NormalizerInterface, DenormalizerInterface,
     {
 
 
-
         return $type === 'App\Entity\Users';
     }
 
     public function denormalize($data, $class, $format = null, array $context = [])
     {
 
-        if ($data['roles'][0] === 'ROLE_SURVEYOR'){
-            $context['groups'][] = 'post:dept';
+        if ($context['operation_type'] === 'collection'){
+            if ($context['collection_operation_name'] === 'post'){
+                if ($data['roles'][0] === 'ROLE_SURVEYOR'){
+                    $context['groups'][] = 'post:dept';
+                }
+            }
         }
 
         return $this->decorated->denormalize($data, $class, $format, $context);

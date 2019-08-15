@@ -64,7 +64,13 @@ use Symfony\Component\Validator\Constraints as Assert;
  *                       "normalization_context" = {
  *                                              "groups" = {"getTask"}
  *                                                 }
- *                      }
+ *                      },
+ *                  "api_users_client_tasks_get_subresource"={
+ *                       "access_control" = "is_granted('IS_AUTHENTICATED_FULLY')",
+ *                       "normalization_context" = {
+ *                                              "groups" = {"getTask"}
+ *                                                 }
+ *                          }
  *      }
  * )
  * @ORM\Entity(repositoryClass="App\Repository\TasksRepository")
@@ -75,14 +81,14 @@ class Tasks implements SuperAdminInterface,CreatedDateInterface
      * @ORM\Id()
      * @ORM\GeneratedValue()
      * @ORM\Column(type="integer")
-     * @Groups({"getTask","get-users"})
+     * @Groups({"getTask","get-users-client","get-users-surveyor"})
      */
     private $id;
 
 
     /**
      * @ORM\Column(type="text")
-     * @Groups({"post","getTask","get-users","put"})
+     * @Groups({"post","getTask","get-users-client","put","get-users-surveyor"})
      * @Assert\NotBlank(groups={"post"})
      * @Assert\Length(max="10000",min="5",groups={"post"})
      */
@@ -95,7 +101,7 @@ class Tasks implements SuperAdminInterface,CreatedDateInterface
 
     /**
      * @ORM\Column(type="string", length=100)
-     * @Groups({"post","getTask","get-users","put"})
+     * @Groups({"post","getTask","get-users-client","put","get-users-surveyor"})
      * @Assert\NotBlank(groups={"post"})
      * @Assert\Length(max="70",groups={"post"})
      */
@@ -103,7 +109,7 @@ class Tasks implements SuperAdminInterface,CreatedDateInterface
 
     /**
      * @ORM\Column(type="datetime")
-     * @Groups({"getTask","get-users"})
+     * @Groups({"getTask","get-users-client","get-users-surveyor"})
      */
     private $createdDate;
 
@@ -117,19 +123,19 @@ class Tasks implements SuperAdminInterface,CreatedDateInterface
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\TaskCategory", inversedBy="tasks")
      * @ORM\JoinColumn(nullable=false)
-     * @Groups({"post","getTask"})
+     * @Groups({"post","getTask","get-users-client","get-users-surveyor"})
      */
     private $category;
 
     /**
      * @ORM\Column(type="string", length=30,nullable=true)
-     * @Groups({"getTask"})
+     * @Groups({"getTask","get-users-client","get-users-surveyor"})
      */
     private $status;
 
     /**
-     * @ORM\ManyToMany(targetEntity="App\Entity\Users", inversedBy="clientTasks")
-     * @ORM\JoinTable(name="client_task")
+     * @ORM\ManyToOne(targetEntity="App\Entity\Users", inversedBy="clientTasks")
+     * @Groups({"getTask"})
      */
     private $client;
 

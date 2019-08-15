@@ -6,6 +6,7 @@ use ApiPlatform\Core\Annotation\ApiResource;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
@@ -25,11 +26,13 @@ use Symfony\Component\Serializer\Annotation\Groups;
  *          "post"= {
  *                  "access_control"="is_granted('ROLE_SUPERADMIN')",
  *                  "normalization_context" = { "groups"={"get_dept"} },
- *                  "denormalization_context" = { "groups" = {"post_dept"}}
+ *                  "denormalization_context" = { "groups" = {"post_dept"}},
+ *                  "validation_groups" ={"post_dept"}
  *                  }
  *     }
  * )
  * @ORM\Entity(repositoryClass="App\Repository\DepartmentRepository")
+ * @UniqueEntity(fields={"DepartmentName"},groups={"post_dept"},message="This Department already exists")
  */
 class Department
 {

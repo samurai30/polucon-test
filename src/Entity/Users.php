@@ -244,7 +244,7 @@ class Users implements UserInterface,CreatedDateInterface
     /**
      * @ORM\ManyToMany(targetEntity="App\Entity\Tasks", mappedBy="Users")
      * @ApiSubresource()
-     * @Groups({"get-users"})
+     * @Groups({"get-users-surveyor"})
      */
     private $Tasks;
 
@@ -271,7 +271,9 @@ class Users implements UserInterface,CreatedDateInterface
     private $profilePic;
 
     /**
-     * @ORM\ManyToMany(targetEntity="App\Entity\Tasks", mappedBy="client")
+     * @ORM\OneToMany(targetEntity="App\Entity\Tasks", mappedBy="client")
+     * @ApiSubresource()
+     * @Groups({"get-users-client"})
      */
     private $clientTasks;
 
@@ -294,6 +296,11 @@ class Users implements UserInterface,CreatedDateInterface
     private $departmentId;
 
     /**
+     * @ORM\OneToMany(targetEntity="App\Entity\Invoices", mappedBy="Clients", orphanRemoval=true)
+     */
+    private $Invoices;
+
+    /**
      * @return mixed
      */
     public function getDepartmentId()
@@ -314,6 +321,7 @@ class Users implements UserInterface,CreatedDateInterface
         $this->confirmationToken = null;
         $this->Tasks = new ArrayCollection();
         $this->clientTasks = new ArrayCollection();
+        $this->Invoices = new ArrayCollection();
 
     }
 
@@ -595,6 +603,37 @@ class Users implements UserInterface,CreatedDateInterface
         // set the owning side of the relation if necessary
         if ($this !== $surveyorUID->getSurveyors()) {
             $surveyorUID->setSurveyors($this);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Invoices[]
+     */
+    public function getInvoices(): Collection
+    {
+        return $this->Invoices;
+    }
+
+    public function addInvoice(Invoices $invoice): self
+    {
+        if (!$this->Invoices->contains($invoice)) {
+            $this->Invoices[] = $invoice;
+            $invoice->setClients($this);
+        }
+
+        return $this;
+    }
+
+    public function removeInvoice(Invoices $invoice): self
+    {
+        if ($this->Invoices->contains($invoice)) {
+            $this->Invoices->removeElement($invoice);
+            // set the owning side to null (unless already changed)
+            if ($invoice->getClients() === $this) {
+                $invoice->setClients(null);
+            }
         }
 
         return $this;
