@@ -77,7 +77,7 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
  *              "normalization_context"={
  *                                         "groups"={"get-users"}
  *                                      },
- *              "validation_groups" ={"post"}
+ *              "validation_groups" ={"post","post:dept"}
  *            },
  *     "get" ={
  *              "access_control"="is_granted('ROLE_SUBADMIN')",
@@ -85,15 +85,6 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
  *                                         "groups"={"get-users"}
  *                                      }
  *          },
- *     "get-surveyor-list"={
- *                        "access_control"="is_granted('ROLE_SURVEYOR')",
- *                        "method"="POST",
- *                        "path"="/users/surveyors",
- *                        "normalization_context"={
- *                                              "groups"={"get-users"}
- *                                                }
- *
- *                      },
  *     "get-users-dashboard"={
  *                           "access_control"="is_granted('IS_AUTHENTICATED_FULLY')",
  *                           "method"="GET",
@@ -120,7 +111,8 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
  *         "firstName": "partial",
  *         "lastName": "partial",
  *         "username": "exact",
- *         "roles" : "exact"
+ *         "roles" : "exact",
+ *         "surveyorUID.department.DepartmentName" : "exact"
  *     }
  * )
  * @ORM\Entity(repositoryClass="App\Repository\UsersRepository")
@@ -295,6 +287,27 @@ class Users implements UserInterface,CreatedDateInterface
      */
     private $surveyorUID;
 
+    /**
+     * @Assert\Type(type="integer", message="The value {{ value }} is not a valid {{ type }}.",groups={"post:dept"})
+     * @Groups({"post:dept"})
+     */
+    private $departmentId;
+
+    /**
+     * @return mixed
+     */
+    public function getDepartmentId()
+    {
+        return $this->departmentId;
+    }
+
+    /**
+     * @param mixed $departmentId
+     */
+    public function setDepartmentId($departmentId): void
+    {
+        $this->departmentId = $departmentId;
+    }
     public function __construct()
     {
         $this->enabled = false;

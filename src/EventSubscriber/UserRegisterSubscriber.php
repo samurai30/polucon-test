@@ -7,6 +7,8 @@ namespace App\EventSubscriber;
 use ApiPlatform\Core\EventListener\EventPriorities;
 use App\Email\Mailer;
 use App\Entity\ClientsUID;
+use App\Entity\Department;
+use App\Entity\SurveyorUID;
 use App\Entity\Users;
 use App\Security\TokenGenerator;
 use Doctrine\ORM\EntityManagerInterface;
@@ -15,6 +17,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Event\RequestEvent;
 use Symfony\Component\HttpKernel\Event\ViewEvent;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\HttpKernel\KernelEvents;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
@@ -59,7 +62,6 @@ class UserRegisterSubscriber implements EventSubscriberInterface
     {
         return [
           KernelEvents::VIEW => ['userRegistered',EventPriorities::PRE_WRITE]
-//            , KernelEvents::REQUEST =>['checkDept',EventPriorities::PRE_DESERIALIZE]
         ];
     }
 
@@ -106,6 +108,19 @@ class UserRegisterSubscriber implements EventSubscriberInterface
             $clientId->setUID($this->getClientId());
             $user->setClientsUID($clientId);
         }
+        if ($user->getRoles()[0] === 'ROLE_SURVEYOR'){
+            if($user->getDepartmentId()){
+                $dept = $this->manager->getRepository(Department::class)->find($user->getDepartmentId());
+                if ($dept){
+                    $surveyorId = new SurveyorUID();
+                    $surveyorId->setUID($this->getSurveyorId());
+                    $surveyorId->setDepartment($dept);
+                    $user->setSurveyorUID($surveyorId);
+                }else{
+                    throw new NotFoundHttpException('sorry this department was not found');
+                }
+            }
+        }
 
         // Hash Password Here
         $user->setPassword($this->encoder->encodePassword($user,$user->getPassword()));
@@ -115,6 +130,18 @@ class UserRegisterSubscriber implements EventSubscriberInterface
         $this->mailer->sendConfrimationEmail($user);
 
     }
+
+    public function getSurveyorId(){
+        $lastSurveyor = $this->manager->getRepository(SurveyorUID::class)->findBy([],['UID' => 'DESC']);
+        if ( ! $lastSurveyor )
+            $number = 0;
+        else
+            $number = substr($lastSurveyor[0]->getUID(), 3);
+        return 'SVR' . sprintf('%06d', intval($number) + 1);
+    }
+
+
+
     public function getClientId(){
         $lastClient = $this->manager->getRepository(ClientsUID::class)->findBy([],['UID' => 'DESC']);
         if ( ! $lastClient )

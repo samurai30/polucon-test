@@ -49,3 +49,8 @@ services:
         arguments:
             $itemExtensions: !tagged api_platform.doctrine.orm.query_extension.collection
         autoconfigure: false
+
+    App\Serializer\UserDeptNormalizer:
+        decorates: 'api_platform.jsonld.normalizer.item'
+        arguments: [ '@App\Serializer\UserDeptNormalizer.inner' ]
+

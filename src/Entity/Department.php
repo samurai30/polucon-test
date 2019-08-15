@@ -6,9 +6,29 @@ use ApiPlatform\Core\Annotation\ApiResource;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
- * @ApiResource()
+ * @ApiResource(
+ *     itemOperations={
+ *          "get" = {
+ *                  "access_control"="is_granted('ROLE_SUBADMIN')",
+ *                   "normalization_context" = { "groups"={"get_dept"} }
+ *                  },
+ *          "delete"={"access_control"="is_granted('ROLE_SUPERADMIN')"},
+ *          "put" =  {"access_control"="is_granted('ROLE_SUPERADMIN')"}
+ *     },
+ *     collectionOperations={
+ *         "get" = {"access_control"="is_granted('ROLE_SUBADMIN')",
+ *                  "normalization_context" = { "groups"={"get_dept"} }
+ *                  },
+ *          "post"= {
+ *                  "access_control"="is_granted('ROLE_SUPERADMIN')",
+ *                  "normalization_context" = { "groups"={"get_dept"} },
+ *                  "denormalization_context" = { "groups" = {"post_dept"}}
+ *                  }
+ *     }
+ * )
  * @ORM\Entity(repositoryClass="App\Repository\DepartmentRepository")
  */
 class Department
@@ -17,11 +37,13 @@ class Department
      * @ORM\Id()
      * @ORM\GeneratedValue()
      * @ORM\Column(type="integer")
+     * @Groups({"get_dept"})
      */
     private $id;
 
     /**
      * @ORM\Column(type="string", length=100)
+     * @Groups({"get-surveyor-uid","get_dept","post_dept"})
      */
     private $DepartmentName;
 

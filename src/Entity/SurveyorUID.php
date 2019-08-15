@@ -4,9 +4,16 @@ namespace App\Entity;
 
 use ApiPlatform\Core\Annotation\ApiResource;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
- * @ApiResource()
+ * @ApiResource(
+ *     collectionOperations={
+ *     "post" = {
+ *              "access_control"="is_granted('ROLE_SUPERADMIN')",
+ *              }
+ *     }
+ * )
  * @ORM\Entity(repositoryClass="App\Repository\SurveyorUIDRepository")
  */
 class SurveyorUID
@@ -20,6 +27,7 @@ class SurveyorUID
 
     /**
      * @ORM\Column(type="string", length=60)
+     * @Groups({"get-surveyor-uid"})
      */
     private $UID;
 
@@ -32,6 +40,7 @@ class SurveyorUID
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\Department", inversedBy="surveyorDepartment")
      * @ORM\JoinColumn(nullable=false)
+     * @Groups({"get-surveyor-uid"})
      */
     private $department;
 
