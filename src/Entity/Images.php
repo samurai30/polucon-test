@@ -18,14 +18,14 @@ use App\Controller\UploadUserImageActionController;
  *         "formats"={"json", "jsonld", "form"={"multipart/form-data"}}
  *     },
  *     itemOperations={
- *         "get",
+ *         "get"={"access_control"="is_granted('ROLE_SUBADMIN') or  (is_granted('IS_AUTHENTICATED_FULLY') and object.getUsers() == user)"},
  *          "delete"={
  *                  "access_control"="is_granted('ROLE_SUBADMIN') or  (is_granted('IS_AUTHENTICATED_FULLY') and object.getUsers() == user)"
  *                   }
  *     },
  *     collectionOperations={
  *     "get"={
- *           "access_control"="is_granted('IS_AUTHENTICATED_FULLY')",
+ *             "access_control"="is_granted('ROLE_SUBADMIN') or  (is_granted('IS_AUTHENTICATED_FULLY') and object.getUsers() == user)",
  *            "normalization_context"={"groups"={"get_images"}}
  *           },
  *     "post"={
@@ -60,7 +60,7 @@ class Images
 
     /**
      * @ORM\Column(nullable=true)
-     * @Groups({"get-users","get_images"})
+     * @Groups({"get-users","get_images","get_invoice"})
      */
     private $url;
 

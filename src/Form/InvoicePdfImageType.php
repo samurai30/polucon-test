@@ -3,8 +3,11 @@
 namespace App\Form;
 
 use App\Entity\Invoices;
+use App\Entity\Users;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
@@ -24,6 +27,15 @@ class InvoicePdfImageType extends AbstractType
                     'label' => 'label.file_image',
                     'required' => false
                 ])
+            ->add('status',TextType::class,[
+                'label' => 'label.status',
+                'required' => true
+            ])
+            ->add('clients',EntityType::class,[
+                'class' => Users::class,
+                'required' => true
+
+            ])
 
         ;
     }
@@ -33,6 +45,7 @@ class InvoicePdfImageType extends AbstractType
         $resolver->setDefaults([
             'data_class' => Invoices::class,
             'csrf_protection' => false
+
         ]);
     }
 

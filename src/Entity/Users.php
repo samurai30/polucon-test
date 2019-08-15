@@ -133,28 +133,28 @@ class Users implements UserInterface,CreatedDateInterface
      * @ORM\Id()
      * @ORM\GeneratedValue()
      * @ORM\Column(type="integer")
-     * @Groups({"get-users","getTask"})
+     * @Groups({"get-users","getTask","get_invoice"})
      */
     private $id;
 
     /**
      * @Assert\NotBlank(groups={"post"})
      * @ORM\Column(type="string", length=120)
-     * @Groups({"post","put","get-users","getTask","get-client-by-uid"})
+     * @Groups({"post","put","get-users","getTask","get-client-by-uid","get_invoice"})
      */
     private $firstName;
 
     /**
      * @Assert\NotBlank(groups={"post"})
      * @ORM\Column(type="string", length=120)
-     * @Groups({"post","put","get-users","getTask","get-client-by-uid"})
+     * @Groups({"post","put","get-users","getTask","get-client-by-uid","get_invoice"})
      */
     private $lastName;
 
     /**
      * @Assert\NotBlank(groups={"post"})
      * @ORM\Column(type="string", length=60)
-     * @Groups({"post","get-users","getTask","get-client-by-uid"})
+     * @Groups({"post","get-users","getTask","get-client-by-uid","get_invoice"})
      */
     private $username;
 
@@ -251,7 +251,7 @@ class Users implements UserInterface,CreatedDateInterface
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\UserCountry", inversedBy="users")
      * @ORM\JoinColumn(nullable=false)
-     * @Groups({"post","get-users"})
+     * @Groups({"post","get-users","get_invoice"})
      * @Assert\NotBlank(groups={"post"})
      */
     private $countries;
@@ -266,7 +266,7 @@ class Users implements UserInterface,CreatedDateInterface
     /**
      * @ORM\OneToOne(targetEntity="App\Entity\Images", inversedBy="users", cascade={"persist"})
      * @ORM\JoinColumn(onDelete="SET NULL")
-     * @Groups({"post","get-users"})
+     * @Groups({"post","get-users","get_invoice"})
      */
     private $profilePic;
 
@@ -297,6 +297,8 @@ class Users implements UserInterface,CreatedDateInterface
 
     /**
      * @ORM\OneToMany(targetEntity="App\Entity\Invoices", mappedBy="Clients", orphanRemoval=true)
+     * @Groups({"get-users-client"})
+     * @ApiSubresource()
      */
     private $Invoices;
 

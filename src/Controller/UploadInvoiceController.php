@@ -5,15 +5,17 @@ namespace App\Controller;
 use ApiPlatform\Core\Validator\Exception\ValidationException;
 use ApiPlatform\Core\Validator\ValidatorInterface;
 use App\Entity\Images;
+use App\Entity\Invoices;
 use App\Form\ImageUserType;
+use App\Form\InvoicePdfImageType;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Routing\Annotation\Route;
 
-class UploadUserImageActionController extends AbstractController
+class UploadInvoiceController extends AbstractController
 {
-
     /**
      * @var FormFactoryInterface
      */
@@ -27,7 +29,7 @@ class UploadUserImageActionController extends AbstractController
      */
     private $validator;
 
-    public function __construct(FormFactoryInterface $formFactory,EntityManagerInterface $manager,ValidatorInterface $validator)
+    public function __construct(FormFactoryInterface $formFactory, EntityManagerInterface $manager, ValidatorInterface $validator)
     {
 
 
@@ -38,20 +40,20 @@ class UploadUserImageActionController extends AbstractController
 
     public function __invoke(Request $request)
     {
+        $invoice = new Invoices();
 
-        $image = new Images();
-
-        $form = $this->formFactory->create(ImageUserType::class,$image);
+        $form = $this->formFactory->create(InvoicePdfImageType::class,$invoice);
         $form->handleRequest($request);
         if($form->isSubmitted() && $form->isValid()){
-            $this->manager->persist($image);
+            $this->manager->persist($invoice);
             $this->manager->flush();
-            $image->setFile(null);
-            return $image;
+            $invoice->setFilePdf(null);
+            $invoice->setFileImage(null);
+            return $invoice;
         }
 
         throw new ValidationException(
-            $this->validator->validate($image)
+            $this->validator->validate($invoice)
         );
 
     }
