@@ -1,7 +1,6 @@
 <?php
 
 namespace App\Entity;
-
 use ApiPlatform\Core\Annotation\ApiResource;
 use DateTime;
 use Doctrine\ORM\Mapping as ORM;
@@ -16,6 +15,7 @@ use App\Controller\UploadInvoiceController;
  *         "order"={"id": "ASC"},
  *         "formats"={"json", "jsonld", "form"={"multipart/form-data"}}
  *     },
+ *     normalizationContext={"groups"={"get_invoice"}},
  *     itemOperations={
  *         "get"={"access_control"="is_granted('ROLE_SUBADMIN') or  (is_granted('IS_AUTHENTICATED_FULLY') and object.getClients() == user)",
  *                "normalization_context" ={"groups"={"get_invoice"}}
@@ -65,26 +65,29 @@ class Invoices
 
     /**
      * @ORM\Column(type="string", length=40)
-     * @Groups({"get_invoice","get-users-client"})
+     * @Groups({"get_invoice"})
      */
     private $status;
+
     /**
-     * @ORM\Column(nullable=true)
+     * @ORM\Column(type="string", length=100, nullable=true)
      * @Groups({"get_invoice","get-users-client"})
      */
-    private $url_pdf;
+    private $urlPdf;
+
     /**
-     * @ORM\Column(nullable=true)
+     * @ORM\Column(type="string", length=100, nullable=true)
      * @Groups({"get_invoice","get-users-client"})
      */
-    private $url_image;
+    private $urlImage;
 
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\Users", inversedBy="Invoices")
      * @ORM\JoinColumn(nullable=false)
      * @Groups({"get_invoice"})
      */
-    private $Clients;
+    private $clients;
+
 
     /**
      * @Assert\File(
@@ -93,10 +96,11 @@ class Invoices
      *          "application/x-pdf"},
      *     mimeTypesMessage="Please upload a PDF file"
      * )
-     * @Vich\UploadableField(mapping="invoices_pdf",fileNameProperty="url_pdf")
-     * @var File $file_pdf
+     * @Vich\UploadableField(mapping="invoices_pdf",fileNameProperty="urlPdf")
      */
     private $file_pdf;
+
+
 
     /**
      * @Assert\File(
@@ -104,19 +108,40 @@ class Invoices
      *     mimeTypes={"image/png", "image/jpeg", "image/pjpeg"},
      *     mimeTypesMessage="Please upload an image."
      * )
-     * @Vich\UploadableField(mapping="invoices_images",fileNameProperty="url_image")
-     * @var File $file_image
+     * @Vich\UploadableField(mapping="invoices_images",fileNameProperty="urlImage")
      */
     private $file_image;
 
     /**
      * @ORM\Column(type="datetime", nullable=true)
-     *
      * @var DateTime $updatedAt
      */
     protected $updatedAt;
 
+    /**
+     * @return DateTime
+     */
+    public function getUpdatedAt(): DateTime
+    {
+        return $this->updatedAt;
+    }
 
+    /**
+     * @param DateTime $updatedAt
+     */
+    public function setUpdatedAt(DateTime $updatedAt): void
+    {
+        $this->updatedAt = $updatedAt;
+    }
+
+    public function getId(): ?int
+    {
+        return $this->id;
+    }
+
+    /**
+     * @return mixed
+     */
     public function getFilePdf()
     {
         return $this->file_pdf;
@@ -130,6 +155,7 @@ class Invoices
         }
     }
 
+
     public function getFileImage()
     {
         return $this->file_image;
@@ -138,50 +164,13 @@ class Invoices
     public function setFileImage($file_image): void
     {
         $this->file_image = $file_image;
+
         if ($file_image) {
             $this->updatedAt = new \DateTime('now');
         }
+
     }
 
-    public function getUrlPdf()
-    {
-        if($this->url_pdf){
-            return '/clients/invoices/pdf/'.$this->url_pdf;
-        }
-        return null;
-    }
-
-    public function setUrlPdf($url_pdf): void
-    {
-        $this->url_pdf = $url_pdf;
-    }
-
-    public function getUrlImage()
-    {
-        if ($this->url_image){
-            return '/clients/invoices/images/'.$this->url_image;
-        }
-        return null;
-    }
-
-    public function setUrlImage($url_image): void
-    {
-        $this->url_image = $url_image;
-    }
-
-    public function getUpdatedAt(): DateTime
-    {
-        return $this->updatedAt;
-    }
-
-    public function setUpdatedAt(DateTime $updatedAt): void
-    {
-        $this->updatedAt = $updatedAt;
-    }
-    public function getId(): ?int
-    {
-        return $this->id;
-    }
 
     public function getStatus(): ?string
     {
@@ -195,16 +184,39 @@ class Invoices
         return $this;
     }
 
-    public function getClients(): ?Users
+    public function getUrlPdf(): ?string
     {
-        return $this->Clients;
+        return $this->urlPdf;
     }
 
-    public function setClients(?Users $Clients): self
+    public function setUrlPdf(?string $urlPdf): self
     {
-        $this->Clients = $Clients;
+        $this->urlPdf = $urlPdf;
 
         return $this;
     }
 
+    public function getUrlImage(): ?string
+    {
+        return $this->urlImage;
+    }
+
+    public function setUrlImage(?string $urlImage): self
+    {
+        $this->urlImage = $urlImage;
+
+        return $this;
+    }
+
+    public function getClients(): ?Users
+    {
+        return $this->clients;
+    }
+
+    public function setClients(?Users $clients): self
+    {
+        $this->clients = $clients;
+
+        return $this;
+    }
 }

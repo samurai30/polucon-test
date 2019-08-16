@@ -6,6 +6,7 @@ use ApiPlatform\Core\Annotation\ApiResource;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -28,7 +29,8 @@ use Symfony\Component\Validator\Constraints as Assert;
  *                                   },
  *            "denormalization_context"={
  *                                    "groups"={"post"}
- *                                      }
+ *                                      },
+ *              "validation_groups" = {"post"}
  *              },
  *     "get" = {
  *             "access_control" = "is_granted('ROLE_ADMIN')",
@@ -39,6 +41,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  *     }
  * )
  * @ORM\Entity(repositoryClass="App\Repository\FormsRepository")
+ * @UniqueEntity(fields={"name"},message="This Form already exists",groups={"post"})
  */
 class Forms
 {
@@ -60,19 +63,20 @@ class Forms
     /**
      * @ORM\Column(type="string", length=100)
      * @Groups({"post","get_form"})
+     * @Assert\NotBlank(groups={"post"})
      */
     private $description;
 
     /**
      * @ORM\Column(type="json_array")
-     * @Assert\NotBlank()
+     * @Assert\NotBlank(groups={"post"})
      * @Groups({"post","get_form"})
      */
     private $formDataJson;
 
     /**
      * @ORM\Column(type="string", length=60)
-     * @Assert\NotBlank()
+     * @Assert\NotBlank(groups={"post"})
      * @Groups({"post","get_form"})
      */
     private $name;

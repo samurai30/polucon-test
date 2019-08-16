@@ -40,13 +40,13 @@ class Department
      * @ORM\Id()
      * @ORM\GeneratedValue()
      * @ORM\Column(type="integer")
-     * @Groups({"get_dept"})
+     * @Groups({"get_dept","get-users-surveyor","getTask"})
      */
     private $id;
 
     /**
      * @ORM\Column(type="string", length=100)
-     * @Groups({"get-surveyor-uid","get_dept","post_dept"})
+     * @Groups({"get-surveyor-uid","get_dept","post_dept","get-users-surveyor","getTask"})
      */
     private $DepartmentName;
 
@@ -55,9 +55,15 @@ class Department
      */
     private $surveyorDepartment;
 
+    /**
+     * @ORM\OneToMany(targetEntity="App\Entity\Tasks", mappedBy="department", orphanRemoval=true)
+     */
+    private $Tasks;
+
     public function __construct()
     {
         $this->surveyorDepartment = new ArrayCollection();
+        $this->Tasks = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -102,6 +108,37 @@ class Department
             // set the owning side to null (unless already changed)
             if ($surveyorDepartment->getDepartment() === $this) {
                 $surveyorDepartment->setDepartment(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Tasks[]
+     */
+    public function getTasks(): Collection
+    {
+        return $this->Tasks;
+    }
+
+    public function addTask(Tasks $task): self
+    {
+        if (!$this->Tasks->contains($task)) {
+            $this->Tasks[] = $task;
+            $task->setDepartment($this);
+        }
+
+        return $this;
+    }
+
+    public function removeTask(Tasks $task): self
+    {
+        if ($this->Tasks->contains($task)) {
+            $this->Tasks->removeElement($task);
+            // set the owning side to null (unless already changed)
+            if ($task->getDepartment() === $this) {
+                $task->setDepartment(null);
             }
         }
 

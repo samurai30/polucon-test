@@ -2,8 +2,8 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Core\Annotation\ApiFilter;
 use ApiPlatform\Core\Annotation\ApiResource;
-use ApiPlatform\Core\Annotation\ApiSubresource;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
@@ -11,7 +11,7 @@ use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Serializer\Annotation\Groups;
 use App\Controller\AddFormsController;
 use Symfony\Component\Validator\Constraints as Assert;
-
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
 /**
  * @ApiResource(
  *     itemOperations={
@@ -53,7 +53,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  *                                      "groups"= {"getTask"}
  *                                      },
  *              "denormalization_context"={
- *                                     "groups"= {"post"}
+ *                                     "groups"= {"post:task"}
  *                                        },
  *              "validation_groups"={"post"}
  *              }
@@ -73,6 +73,15 @@ use Symfony\Component\Validator\Constraints as Assert;
  *                          }
  *      }
  * )
+ * @ApiFilter(
+ *     SearchFilter::class,
+ *     properties={
+ *         "Title": "partial",
+ *         "status": "exact",
+ *          "department.DepartmentName":"exact"
+ *
+ *          }
+ * )
  * @ORM\Entity(repositoryClass="App\Repository\TasksRepository")
  */
 class Tasks implements SuperAdminInterface,CreatedDateInterface
@@ -88,7 +97,7 @@ class Tasks implements SuperAdminInterface,CreatedDateInterface
 
     /**
      * @ORM\Column(type="text")
-     * @Groups({"post","getTask","get-users-client","put","get-users-surveyor"})
+     * @Groups({"post:task","getTask","get-users-client","put","get-users-surveyor"})
      * @Assert\NotBlank(groups={"post"})
      * @Assert\Length(max="10000",min="5",groups={"post"})
      */
@@ -101,7 +110,7 @@ class Tasks implements SuperAdminInterface,CreatedDateInterface
 
     /**
      * @ORM\Column(type="string", length=100)
-     * @Groups({"post","getTask","get-users-client","put","get-users-surveyor"})
+     * @Groups({"post:task","getTask","get-users-client","put","get-users-surveyor"})
      * @Assert\NotBlank(groups={"post"})
      * @Assert\Length(max="70",groups={"post"})
      */
@@ -116,14 +125,14 @@ class Tasks implements SuperAdminInterface,CreatedDateInterface
     /**
      * @ORM\ManyToMany(targetEntity="App\Entity\Users", inversedBy="Tasks")
      * @ORM\JoinTable(name="tasks_surveyors")
-     * @Groups({"getTask"})
+     * @Groups({"getTask","put"})
      */
     private $Users;
 
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\TaskCategory", inversedBy="tasks")
      * @ORM\JoinColumn(nullable=false)
-     * @Groups({"post","getTask","get-users-client","get-users-surveyor"})
+     * @Groups({"post:task","getTask","get-users-client","get-users-surveyor"})
      */
     private $category;
 
@@ -133,18 +142,28 @@ class Tasks implements SuperAdminInterface,CreatedDateInterface
      */
     private $status;
 
+
+
+    /**
+     * @ORM\ManyToOne(targetEntity="App\Entity\Department", inversedBy="Tasks")
+     * @ORM\JoinColumn(nullable=false)
+     * @Groups({"post:task","get-users-surveyor","getTask"})
+     */
+    private $department;
+
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\Users", inversedBy="clientTasks")
-     * @Groups({"getTask"})
+     * @ORM\JoinColumn(nullable=false)
+     * @Groups({"post:task","getTask"})
      */
-    private $client;
+    private $clients;
+
 
     public function __construct()
     {
         $this->Forms = new ArrayCollection();
         $this->Users = new ArrayCollection();
-        $this->client = new ArrayCollection();
-    }
+     }
 
     public function getId(): ?int
     {
@@ -159,17 +178,11 @@ class Tasks implements SuperAdminInterface,CreatedDateInterface
         return $this;
     }
 
-    /**
-     * @return mixed
-     */
     public function getDescription()
     {
         return $this->description;
     }
 
-    /**
-     * @return Collection|FormTasks[]
-     */
     public function getForms(): Collection
     {
         return $this->Forms;
@@ -222,9 +235,6 @@ class Tasks implements SuperAdminInterface,CreatedDateInterface
         return $this;
     }
 
-    /**
-     * @return Collection|Users[]
-     */
     public function getUsers(): Collection
     {
         return $this->Users;
@@ -271,31 +281,31 @@ class Tasks implements SuperAdminInterface,CreatedDateInterface
         return $this;
     }
 
-    /**
-     * @return Collection|Users[]
-     */
-    public function getClient(): Collection
+    public function getDepartment(): ?Department
     {
-        return $this->client;
+        return $this->department;
     }
 
-    public function addClient(Users $client): self
+    public function setDepartment(?Department $department): self
     {
-        if (!$this->client->contains($client)) {
-            $this->client[] = $client;
-        }
+        $this->department = $department;
 
         return $this;
     }
 
-    public function removeClient(Users $client): self
+    public function getClients(): ?Users
     {
-        if ($this->client->contains($client)) {
-            $this->client->removeElement($client);
-        }
+        return $this->clients;
+    }
+
+    public function setClients(?Users $clients): self
+    {
+        $this->clients = $clients;
 
         return $this;
     }
+
+
 
 
 

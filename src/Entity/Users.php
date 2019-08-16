@@ -110,7 +110,7 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
  *     properties={
  *         "firstName": "partial",
  *         "lastName": "partial",
- *         "username": "exact",
+ *         "username": "partial",
  *         "roles" : "exact",
  *         "surveyorUID.department.DepartmentName" : "exact"
  *     }
@@ -270,12 +270,6 @@ class Users implements UserInterface,CreatedDateInterface
      */
     private $profilePic;
 
-    /**
-     * @ORM\OneToMany(targetEntity="App\Entity\Tasks", mappedBy="client")
-     * @ApiSubresource()
-     * @Groups({"get-users-client"})
-     */
-    private $clientTasks;
 
     /**
      * @ORM\OneToOne(targetEntity="App\Entity\ClientsUID", mappedBy="clients", cascade={"persist", "remove"})
@@ -296,11 +290,18 @@ class Users implements UserInterface,CreatedDateInterface
     private $departmentId;
 
     /**
-     * @ORM\OneToMany(targetEntity="App\Entity\Invoices", mappedBy="Clients", orphanRemoval=true)
+     * @ORM\OneToMany(targetEntity="App\Entity\Invoices", mappedBy="clients", orphanRemoval=true)
      * @Groups({"get-users-client"})
      * @ApiSubresource()
      */
     private $Invoices;
+
+    /**
+     * @ORM\OneToMany(targetEntity="App\Entity\Tasks", mappedBy="clients", orphanRemoval=true)
+     * @Groups({"get-users-client"})
+     * @ApiSubresource()
+     */
+    private $clientTasks;
 
     /**
      * @return mixed
@@ -322,9 +323,8 @@ class Users implements UserInterface,CreatedDateInterface
         $this->enabled = false;
         $this->confirmationToken = null;
         $this->Tasks = new ArrayCollection();
-        $this->clientTasks = new ArrayCollection();
         $this->Invoices = new ArrayCollection();
-
+        $this->clientTasks = new ArrayCollection();
     }
 
     public function getEnabled()
@@ -548,34 +548,6 @@ class Users implements UserInterface,CreatedDateInterface
         return $this;
     }
 
-    /**
-     * @return Collection|Tasks[]
-     */
-    public function getClientTasks(): Collection
-    {
-        return $this->clientTasks;
-    }
-
-    public function addClientTask(Tasks $clientTask): self
-    {
-        if (!$this->clientTasks->contains($clientTask)) {
-            $this->clientTasks[] = $clientTask;
-            $clientTask->addClient($this);
-        }
-
-        return $this;
-    }
-
-    public function removeClientTask(Tasks $clientTask): self
-    {
-        if ($this->clientTasks->contains($clientTask)) {
-            $this->clientTasks->removeElement($clientTask);
-            $clientTask->removeClient($this);
-        }
-
-        return $this;
-    }
-
     public function getClientsUID(): ?ClientsUID
     {
         return $this->clientsUID;
@@ -640,5 +612,38 @@ class Users implements UserInterface,CreatedDateInterface
 
         return $this;
     }
+
+    /**
+     * @return Collection|Tasks[]
+     */
+    public function getClientTasks(): Collection
+    {
+        return $this->clientTasks;
+    }
+
+    public function addClientTask(Tasks $clientTask): self
+    {
+        if (!$this->clientTasks->contains($clientTask)) {
+            $this->clientTasks[] = $clientTask;
+            $clientTask->setClients($this);
+        }
+
+        return $this;
+    }
+
+    public function removeClientTask(Tasks $clientTask): self
+    {
+        if ($this->clientTasks->contains($clientTask)) {
+            $this->clientTasks->removeElement($clientTask);
+            // set the owning side to null (unless already changed)
+            if ($clientTask->getClients() === $this) {
+                $clientTask->setClients(null);
+            }
+        }
+
+        return $this;
+    }
+
+
 
 }
