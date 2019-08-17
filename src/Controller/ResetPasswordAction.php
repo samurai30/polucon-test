@@ -51,7 +51,6 @@ class ResetPasswordAction
             $this->encoder->encodePassword($data,$data->getNewPassword())
         );
 
-
         $data->setPasswordChangeDate(time());
         $this->manager->flush();
 

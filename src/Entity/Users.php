@@ -55,8 +55,7 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
  *                  "controller"=ResetPasswordAction::class,
  *                  "denormalization_context"={
  *                                       "groups" = {"put-reset-password"}
- *                              },
- *                  "validation_groups" ={"put-reset-password"}
+ *                              }
  *     },
  *     "delete"={
  *              "access_control" = "is_granted('ROLE_SUPERADMIN')"
@@ -184,22 +183,21 @@ class Users implements UserInterface,CreatedDateInterface
 
     /**
      * @Groups({"put-reset-password"})
-     * @Assert\NotBlank(message="input password please",groups={"put-reset-password"})
+     * @Assert\NotBlank(message="password please")
      * @Assert\Regex(
      *     pattern="/(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9]).{6,}/",
-     *     message="Password must be 6 character long and contains at least one digit, one Upper case letter and one Lower case letter",
-     *     groups={"put-reset-password"}
+     *     message="Password must be 6 character long and contains at least one digit, one Upper case letter and one Lower case letter"
      * )
      */
 
     private $newPassword;
+
     /**
-     * @Assert\NotBlank(groups={"put-reset-password"})
+     * @Assert\NotBlank()
      * @Groups({"put-reset-password"})
      * @Assert\Expression(
      *     "this.getNewPassword() === this.getNewRetypePassword()",
-     *     message="Password does not match",
-     *     groups={"put-reset-password"}
+     *     message="Password does not match"
      * )
      */
 
@@ -207,8 +205,8 @@ class Users implements UserInterface,CreatedDateInterface
 
     /**
      * @Groups({"put-reset-password"})
-     * @Assert\NotBlank(groups={"put-reset-password"})
-     * @UserPassword(groups={"put-reset-password"})
+     * @Assert\NotBlank()
+     * @UserPassword()
      */
     private $oldPassword;
 

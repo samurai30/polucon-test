@@ -103,6 +103,7 @@ class Images
         if ($file) {
             $this->updatedAt = new \DateTime('now');
         }
+
     }
 
     public function getUrl()
