@@ -12,6 +12,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
 /**
  * @ApiResource(
+ *     attributes={"pagination_enabled"=false},
  *     itemOperations={
  *          "get" = {
  *                  "access_control"="is_granted('ROLE_SUBADMIN')",
@@ -35,7 +36,7 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
  * @ApiFilter(
  *     SearchFilter::class,
  *     properties={
- *         "DepartmentName" : "exact"
+ *         "DepartmentName" : "word_start"
  *     }
  * )
  * @ORM\Entity(repositoryClass="App\Repository\DepartmentRepository")

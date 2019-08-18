@@ -76,9 +76,9 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
  * @ApiFilter(
  *     SearchFilter::class,
  *     properties={
- *         "Title": "partial",
+ *         "Title": "word_start",
  *         "status": "exact",
- *          "department.DepartmentName":"exact"
+ *         "department.DepartmentName":"exact"
  *
  *          }
  * )
@@ -138,11 +138,9 @@ class Tasks implements SuperAdminInterface,CreatedDateInterface
 
     /**
      * @ORM\Column(type="string", length=30,nullable=true)
-     * @Groups({"getTask","get-users-client","get-users-surveyor"})
+     * @Groups({"getTask","get-users-client","get-users-surveyor","put"})
      */
     private $status;
-
-
 
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\Department", inversedBy="Tasks")

@@ -109,7 +109,7 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
  *     properties={
  *         "firstName": "partial",
  *         "lastName": "partial",
- *         "username": "partial",
+ *         "username": "word_start",
  *         "roles" : "exact",
  *         "surveyorUID.department.DepartmentName" : "exact"
  *     }
