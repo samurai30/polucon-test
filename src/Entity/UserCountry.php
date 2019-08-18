@@ -10,6 +10,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
  * @ApiResource(
+ *     attributes={"pagination_enabled"=false},
  *     itemOperations={
  *          "get"={
  *              "access_control"="is_granted('IS_AUTHENTICATED_FULLY')",

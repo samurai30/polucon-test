@@ -18,7 +18,9 @@ use App\Controller\UploadUserImageActionController;
  *         "formats"={"json", "jsonld", "form"={"multipart/form-data"}}
  *     },
  *     itemOperations={
- *         "get"={"access_control"="is_granted('ROLE_SUBADMIN') or  (is_granted('IS_AUTHENTICATED_FULLY') and object.getUsers() == user)"},
+ *         "get"={"access_control"="is_granted('ROLE_SUBADMIN') or  (is_granted('IS_AUTHENTICATED_FULLY') and object.getUsers() == user)",
+ *           "normalization_context"={"groups"={"get_images"}}
+ *          },
  *          "delete"={
  *                  "access_control"="is_granted('ROLE_SUBADMIN') or  (is_granted('IS_AUTHENTICATED_FULLY') and object.getUsers() == user)"
  *                   }

@@ -25,7 +25,6 @@ class AppFixtures extends Fixture
     }
     const ROLE_SUPERADMIN = 'ROLE_SUPERADMIN';
     const COUNTRIES = [
-        ['id'=>'DZ','name' => 'Algeria'],
         ['id'=>'AO','name' => 'Angola'],
         ['id'=>'BJ','name' => 'Benin'],
         ['id'=>'BW','name' => 'Botswana'],

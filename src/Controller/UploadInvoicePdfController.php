@@ -4,18 +4,15 @@ namespace App\Controller;
 
 use ApiPlatform\Core\Validator\Exception\ValidationException;
 use ApiPlatform\Core\Validator\ValidatorInterface;
-use App\Entity\Images;
 use App\Entity\InvoiceImage;
-use App\Entity\Invoices;
-use App\Form\ImageUserType;
-use App\Form\InvoiceImageType;
+use App\Entity\InvoicePdf;
+use App\Form\InvoicePdfType;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\Request;
 
-
-class UploadInvoiceController extends AbstractController
+class UploadInvoicePdfController extends AbstractController
 {
     /**
      * @var FormFactoryInterface
@@ -41,20 +38,20 @@ class UploadInvoiceController extends AbstractController
 
     public function __invoke(Request $request)
     {
-        $invoice_image = new InvoiceImage();
+        $invoice_pdf = new InvoicePdf();
 
-        $form = $this->formFactory->create(InvoiceImageType::class,$invoice_image);
+        $form = $this->formFactory->create(InvoicePdfType::class,$invoice_pdf);
         $form->handleRequest($request);
         if($form->isSubmitted() && $form->isValid()){
-            $this->manager->persist($invoice_image);
+            $this->manager->persist($invoice_pdf);
             $this->manager->flush();
-            $invoice_image->setFileImage(null);
+            $invoice_pdf->setFilePdf(null);
 
-            return $invoice_image;
+            return $invoice_pdf;
         }
 
         throw new ValidationException(
-            $this->validator->validate($invoice_image)
+            $this->validator->validate($invoice_pdf)
         );
 
     }
